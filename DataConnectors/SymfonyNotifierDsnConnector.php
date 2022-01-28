@@ -5,10 +5,15 @@ use exface\Core\CommonLogic\AbstractDataConnectorWithoutTransactions;
 use exface\Core\Interfaces\DataSources\DataQueryInterface;
 use Symfony\Component\Notifier\Transport\Dsn;
 use Symfony\Component\Notifier\Transport\TransportInterface;
+use Symfony\Component\Notifier\Transport\TransportFactoryInterface;
 use axenox\UrlDataxenox\Notifier\DataSources\SymfonyNotifierMessageDataQuery;
 use exface\Core\Exceptions\DataSources\DataConnectionQueryTypeError;
+use exface\Core\Interfaces\Communication\CommunicationMessageInterface;
+use exface\Core\Interfaces\Communication\CommunicationReceiptInterface;
+use exface\Core\Interfaces\Communication\CommunicationConnectionInterface;
+use exface\Core\CommonLogic\Communication\CommunicationReceipt;
 
-class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactions
+class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactions implements CommunicationConnectionInterface
 {
     private $dsn = null;
     
@@ -89,17 +94,18 @@ class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactio
      */
     protected function getTransportFactory() : TransportFactoryInterface
     {
-        return new $this->getTransportFactoryClass();
+        $class = $this->getTransportFactoryClass();
+        return new $class();
     }
     
     /**
      * The PHP class of the transport factory to be used
      * 
-     * @uxon-property transport_class
+     * @uxon-property transport_factory_class
      * @uxon-type string
      * @uxon-required true
      * 
-     * @see Symfony\Component\Notifier\Transport\TransportFactoryInterface
+     * @see \Symfony\Component\Notifier\Transport\TransportFactoryInterface
      * 
      * @param string $value
      * @return SymfonyNotifierDsnConnector
@@ -114,8 +120,15 @@ class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactio
      * 
      * @return TransportInterface
      */
-    public function getTransport() : TransportInterface
+    protected function getTransport() : TransportInterface
     {
         return $this->getTransportFactory()->create($this->getDsn());
+    }
+    
+    public function communicate(CommunicationMessageInterface $message, array $recipients) : CommunicationReceiptInterface
+    {
+        $transport = $this->getTransport();
+        $transport->send($message->getSymfonyMessage());
+        return new CommunicationReceipt($message);
     }
 }

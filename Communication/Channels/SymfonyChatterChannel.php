@@ -2,60 +2,78 @@
 namespace axenox\Notifier\Communication\Channels;
 
 use exface\Core\CommonLogic\Communication\AbstractCommunicationChannel;
-use exface\Core\CommonLogic\Communication\CommunicationAcknowledgement;
-use exface\Core\Interfaces\Communication\CommunicationMessageInterface;
-use exface\Core\Interfaces\Communication\CommunicationAcknowledgementInterface;
-use Symfony\Component\Notifier\Message\ChatMessage;
-use Symfony\Component\Notifier\Chatter;
+use exface\Core\Interfaces\Communication\CommunicationReceiptInterface;
+use exface\Core\Interfaces\Communication\EnvelopeInterface;
+use exface\Core\CommonLogic\UxonObject;
+use axenox\Notifier\Communication\Messages\MicrosoftTeamsMessage;
+use axenox\Notifier\Communication\Messages\SymfonyChatMessage;
 
 class SymfonyChatterChannel extends AbstractCommunicationChannel
 {
-    private $messageOptionsClass = null;
+    private $messageClass = null;
     
-    public function send(CommunicationMessageInterface $message) : CommunicationAcknowledgementInterface
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\Communication\CommunicationChannelInterface::send($envelope)
+     */
+    public function send(EnvelopeInterface $envelope) : CommunicationReceiptInterface
     {
         $connection = $this->getConnection();
-        // TODO Check connection type
-        $transport = $connection->getTransport();
-        $chatter = new Chatter($transport);
-        $chatter->send($this->createChatMessage($message));
-        return new CommunicationAcknowledgement($message, $this);
-    }
-    
-    protected function createChatMessage(CommunicationMessageInterface $message) : ChatMessage
-    {
-        $optionsClass = $this->getMessageOptionsClass();
-        if ($optionsClass) {
-            $options = new $optionsClass($message->getOptionsUxon()->toArray());
-        } else {
-            $options = [];
-        }
-        $chatMsg = new ChatMessage($message->getSubject() ?? $message->getText(), $options);
-        /*
-        $message = new ChatMessage('DevMan chat test!', new MicrosoftTeamsOptions([
-            'summary' => 'test summary',
-            'text' => 'test text @Andrej'
-        ]));*/
-        return $chatMsg;
-    }
-    
-    protected function getMessageOptionsClass() : string
-    {
-        return $this->messageOptionsClass;
+        
+        return $connection->communicate(
+            $this->createMessage(
+                $this->getMessageDefaults()->extend($envelope->getPayloadUxon())
+            ),
+            $envelope->getRecipients()
+        );
     }
     
     /**
-     * PHP class for chat message options
      * 
-     * @uxon-property message_options_class
+     * @param UxonObject $payloadUxon
+     * @return MicrosoftTeamsMessage
+     */
+    protected function createMessage(UxonObject $payloadUxon) : SymfonyChatMessage
+    {
+        $class = $this->getMessagePrototype();
+        return new $class($this->getMessageDefaults()->extend($payloadUxon));
+    }
+    
+    /**
+     * 
+     * @param string $default
+     * @return string
+     */
+    protected function getMessagePrototype(string $default = SymfonyChatMessage::class) : string
+    {
+        return $this->messageClass ?? $default;
+    }
+    
+    /**
+     * The PHP class to use for messages in this channel
+     * 
+     * @uxon-property message_prototype
      * @uxon-type string
+     * @uxon-template \axenox\Notifier\Communication\Messages\SymfonyChatMessage
+     * @uxon-default \axenox\Notifier\Communication\Messages\SymfonyChatMessage
      * 
      * @param string $value
      * @return SymfonyChatterChannel
      */
-    protected function setMessageOptionsClass(string $value) : SymfonyChatterChannel
+    public function setMessagePrototype(string $value) : SymfonyChatterChannel
     {
-        $this->messageOptionsClass = $value;
+        $this->messageClass = $value;
         return $this;
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\iCanBeConvertedToUxon::exportUxonObject()
+     */
+    public function exportUxonObject()
+    {
+        return new UxonObject();
     }
 }
