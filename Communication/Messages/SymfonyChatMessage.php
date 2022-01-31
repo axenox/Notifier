@@ -1,14 +1,14 @@
 <?php
 namespace axenox\Notifier\Communication\Messages;
 
-use exface\Core\Communication\Messages\GenericMessage;
+use exface\Core\CommonLogic\Communication\AbstractMessage;
 use axenox\Notifier\Interfaces\SymfonyMessageInterface;
 use Symfony\Component\Notifier\Message\MessageOptionsInterface;
 use Symfony\Component\Notifier\Message\MessageInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 use exface\Core\CommonLogic\UxonObject;
 
-class SymfonyChatMessage extends GenericMessage implements SymfonyMessageInterface
+class SymfonyChatMessage extends AbstractMessage implements SymfonyMessageInterface
 {
     private $messageOptions = null;
     
@@ -38,7 +38,7 @@ class SymfonyChatMessage extends GenericMessage implements SymfonyMessageInterfa
     }
     
     /**
-     * Custom Symfony message options available for the selected `message_options_class`.
+     * Custom Symfony message options specific to the transport used in the connection of the channel.
      * 
      * @uxon-property message_options
      * @uxon-type object

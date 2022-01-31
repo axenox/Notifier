@@ -3,9 +3,34 @@ namespace axenox\Notifier\Communication\Messages;
 
 use Symfony\Component\Notifier\Bridge\MicrosoftTeams\MicrosoftTeamsOptions;
 use Symfony\Component\Notifier\Message\MessageOptionsInterface;
+use exface\Core\CommonLogic\Communication\AbstractMessage;
+use axenox\Notifier\Interfaces\SymfonyMessageInterface;
+use Symfony\Component\Notifier\Message\ChatMessage;
+use Symfony\Component\Notifier\Message\MessageInterface;
+use exface\Core\CommonLogic\UxonObject;
 
-class MicrosoftTeamsMessage extends SymfonyChatMessage
+/**
+ * Special message type for Microsoft message cards
+ * 
+ * You can control the message appearance using the `card` property of
+ * the message. Design your messages using the official interactive playground here:
+ * https://messagecardplayground.azurewebsites.net/. Use placeholders available
+ * at the point where the notification is to be created (e.g. the `NotifyingBehavior`).
+ * Once you are done, copy-paste the entire JSON to `card`.
+ * 
+ * @author andrej.kabachnik
+ *
+ */
+class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInterface
 {
+    private $card = null;
+    
+    public function getSymfonyMessage(string $optionsClass = null) : MessageInterface
+    {
+        $chatMsg = new ChatMessage($this->getText(), $this->getSymfonyMessageOptions($optionsClass));
+        return $chatMsg;
+    }
+    
     /**
      * 
      * {@inheritDoc}
@@ -14,12 +39,43 @@ class MicrosoftTeamsMessage extends SymfonyChatMessage
     protected function getSymfonyMessageOptions(string $optionsClass = null) : ?MessageOptionsInterface
     {
         if ($optionsClass !== null && $optionsClass !== '\\' . MicrosoftTeamsOptions::class) {
-            return parent::getSymfonyMessageOptions($optionsClass);
+            return new $optionsClass();
         }
-        $baseOptions = [
-            'summary' => $this->getSubject(),
-            'text' => $this->getText()
-        ];
-        return new MicrosoftTeamsOptions(array_merge($baseOptions, $this->getMessageOptions()));
+        return new MicrosoftTeamsOptions($this->getCard()->toArray());
+    }
+    
+    /**
+     * 
+     * @return UxonObject
+     */
+    protected function getCard() : UxonObject
+    {
+        return $this->card ?? new UxonObject();
+    }
+    
+    /**
+     * Definition of a Microsoft message card 
+     * 
+     * @uxon-property card
+     * @uxon-type object
+     * @uxon-template {"@type": "MessageCard", "@context": "https://schema.org/extensions", "summary": "", "title": ""}
+     * 
+     * @param UxonObject $value
+     * @return MicrosoftTeamsMessage
+     */
+    public function setCard(UxonObject $value) : MicrosoftTeamsMessage
+    {
+        $this->card = $value;
+        return $this;
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\Communication\CommunicationMessageInterface::getText()
+     */
+    public function getText(): string
+    {
+        return $this->card['title'] ?? $this->card['summary'] ?? $this->card['text'] ?? '';
     }
 }

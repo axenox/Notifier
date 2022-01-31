@@ -30,7 +30,7 @@ class SymfonyChatterConnector extends SymfonyNotifierDsnConnector
 {
     private $messageOptionsClass = null;
     
-    public function communicate(CommunicationMessageInterface $message, array $recipients) : CommunicationReceiptInterface
+    public function communicate(CommunicationMessageInterface $message) : CommunicationReceiptInterface
     {
         if (! ($message instanceof SymfonyMessageInterface)) {
             $message = $this->castMessage($message);
@@ -38,7 +38,7 @@ class SymfonyChatterConnector extends SymfonyNotifierDsnConnector
         $transport = $this->getTransport();
         $chatter = new Chatter($transport);
         $chatter->send($message->getSymfonyMessage($this->getMessageOptionsClass()));
-        return new CommunicationReceipt($message);
+        return new CommunicationReceipt($message, $this);
     }
     
     /**

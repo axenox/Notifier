@@ -125,10 +125,10 @@ class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactio
         return $this->getTransportFactory()->create($this->getDsn());
     }
     
-    public function communicate(CommunicationMessageInterface $message, array $recipients) : CommunicationReceiptInterface
+    public function communicate(CommunicationMessageInterface $message) : CommunicationReceiptInterface
     {
         $transport = $this->getTransport();
         $transport->send($message->getSymfonyMessage());
-        return new CommunicationReceipt($message);
+        return new CommunicationReceipt($message, $this);
     }
 }
