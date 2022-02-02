@@ -27,7 +27,7 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
     
     public function getSymfonyMessage(string $optionsClass = null) : MessageInterface
     {
-        $chatMsg = new ChatMessage($this->getText(), $this->getSymfonyMessageOptions($optionsClass));
+        $chatMsg = new ChatMessage(($this->hasCard() ? '' : $this->getText()), $this->getSymfonyMessageOptions($optionsClass));
         return $chatMsg;
     }
     
@@ -42,6 +42,11 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
             return new $optionsClass();
         }
         return new MicrosoftTeamsOptions($this->getCard()->toArray());
+    }
+    
+    protected function hasCard() : bool
+    {
+        return $this->card !== null;
     }
     
     /**
@@ -76,6 +81,6 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
      */
     public function getText(): string
     {
-        return $this->card['title'] ?? $this->card['summary'] ?? $this->card['text'] ?? '';
+        return $this->card->getProperty('title') ?? $this->card->getProperty('summary') ?? $this->card->getProperty('text') ?? '';
     }
 }
