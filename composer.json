@@ -2,8 +2,7 @@
 	"name" : "axenox/notifier",
 	"require" : {
 		"exface/core" : "^1.0",
-		"symfony/notifier": "^5",
-		"symfony/microsoft-teams-notifier": "^5"
+		"symfony/notifier" : "^5"
 	},
 	"autoload" : {
 		"psr-4" : {
