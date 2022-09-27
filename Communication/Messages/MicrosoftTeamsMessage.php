@@ -8,6 +8,8 @@ use axenox\Notifier\Interfaces\SymfonyMessageInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 use Symfony\Component\Notifier\Message\MessageInterface;
 use exface\Core\CommonLogic\UxonObject;
+use exface\Core\Interfaces\Communication\CommunicationMessageInterface;
+use exface\Core\DataTypes\StringDataType;
 
 /**
  * Special message type for Microsoft message cards
@@ -82,5 +84,39 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
     public function getText(): string
     {
         return $this->card->getProperty('title') ?? $this->card->getProperty('summary') ?? $this->card->getProperty('text') ?? '';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\Communication\CommunicationMessageInterface::setText()
+     */
+    public function setText(string $value) : CommunicationMessageInterface
+    {
+        if ($this->card === null) {
+            $this->card = new UxonObject();
+        }
+        
+        if (StringDataType::stripLineBreaks($value) === $value) {
+            $this->card->setProperty('title', $value);
+        } else {
+            $this->card->setProperty('text', $value);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\iCanBeConvertedToUxon::exportUxonObject()
+     */
+    public function exportUxonObject()
+    {
+        $uxon = parent::exportUxonObject();
+        if ($this->card !== null) {
+            $uxon->setProperty('card', $this->dard);
+        }
+        return $uxon;
     }
 }

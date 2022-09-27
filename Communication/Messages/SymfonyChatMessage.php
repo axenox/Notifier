@@ -1,14 +1,14 @@
 <?php
 namespace axenox\Notifier\Communication\Messages;
 
-use exface\Core\CommonLogic\Communication\AbstractMessage;
+use exface\Core\Communication\TextMessage;
 use axenox\Notifier\Interfaces\SymfonyMessageInterface;
 use Symfony\Component\Notifier\Message\MessageOptionsInterface;
 use Symfony\Component\Notifier\Message\MessageInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 use exface\Core\CommonLogic\UxonObject;
 
-class SymfonyChatMessage extends AbstractMessage implements SymfonyMessageInterface
+class SymfonyChatMessage extends TextMessage implements SymfonyMessageInterface
 {
     private $messageOptions = null;
     
