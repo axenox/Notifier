@@ -1,25 +1,23 @@
 {
-	"name" : "axenox/notifier",
-	"require" : {
-		"exface/core" : "^1.0",
-		"symfony/notifier" : "^5"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"\\axenox\\Notifier\\" : ""
-		},
-		"exclude-from-classmap" : [
-			"/Config/",
-			"/Translations/",
-			"/Model/"
-		]
-	},
-	"extra" : {
-		"app" : {
-			"app_uid" : "0x11ec8b3a97dedf288b3a00059a3c7a00",
-			"app_alias" : "axenox.Notifier",
-			"model_md5" : "775e82c6a18bbab375dac29f840ff818",
-			"model_timestamp" : "2022-01-22 10:49:28"
-		}
-	}
+    "name": "axenox/notifier",
+    "require": {
+        "exface/core": "^1.0",
+        "symfony/notifier": "^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "\\axenox\\Notifier\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Config/",
+            "/Translations/",
+            "/Model/"
+        ]
+    },
+    "extra": {
+        "app": {
+            "app_uid": "0x11ec8b3a97dedf288b3a00059a3c7a00",
+            "app_alias": "axenox.Notifier"
+        }
+    }
 }
