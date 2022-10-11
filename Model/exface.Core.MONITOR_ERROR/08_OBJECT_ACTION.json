@@ -61,7 +61,7 @@
     "rows": [
         {
             "CREATED_ON": "2022-10-10 12:10:02",
-            "MODIFIED_ON": "2022-10-11 12:14:59",
+            "MODIFIED_ON": "2022-10-11 16:15:04",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11eda9f5b56b6daca9f5025041000001",
@@ -72,18 +72,29 @@
             "SHORT_DESCRIPTION": "",
             "CONFIG_UXON": {
                 "skip_actions_if_input_empty": true,
+                "result_message_delimiter": ". ",
                 "actions": [
                     {
                         "alias": "exface.Core.ReadData",
+                        "result_message_text": "%number% errors to send to MS Teams",
                         "input_data_sheet": {
                             "object_alias": "exface.Core.MONITOR_ERROR",
+                            "rows_limit": 20,
+                            "columns": [
+                                {
+                                    "attribute_alias": "UID"
+                                },
+                                {
+                                    "attribute_alias": "MODIFIED_ON"
+                                }
+                            ],
                             "filters": {
                                 "operator": "AND",
                                 "conditions": [
                                     {
-                                        "expression": "CREATED_ON",
-                                        "comparator": ">=",
-                                        "value": "=Lookup('CREATED_ON', 'exface.Core.QUEUED_TASK', '{\"operator\": \"AND\", \"conditions\": [{\"expression\": \"SCHEDULER\", \"comparator\": \"==\", \"value\": \"0x11edadd4191649d2add4025041000001\"},{\"expression\": \"STATUS\", \"comparator\": \">\", \"value\": \"90\"}]}')"
+                                        "expression": "STATUS",
+                                        "comparator": "==",
+                                        "value": 10
                                     }
                                 ]
                             }
@@ -91,11 +102,25 @@
                     },
                     {
                         "alias": "exface.Core.SendMessage",
+                        "input_rows_min": 1,
                         "messages": [
                             {
-                                "template": "powerui.Monitor.teams_post_on_monitor_error"
+                                "template": "axenox.Notifier.teams_post_on_monitor_error"
                             }
                         ]
+                    },
+                    {
+                        "alias": "exface.Core.UpdateData",
+                        "input_rows_min": 1,
+                        "input_mapper": {
+                            "inherit_columns_only_for_system_attributes": true,
+                            "column_to_column_mappings": [
+                                {
+                                    "from": 15,
+                                    "to": "STATUS"
+                                }
+                            ]
+                        }
                     }
                 ]
             },
