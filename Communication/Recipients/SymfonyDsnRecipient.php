@@ -14,7 +14,7 @@ class SymfonyDsnRecipient implements DsnRecipientInterface
      */
     public function __construct(string $dsn)
     {
-        $this->email = trim($dsn);
+        $this->dsnString = trim($dsn);
     }
     
     /**
