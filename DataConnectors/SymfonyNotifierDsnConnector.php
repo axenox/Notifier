@@ -12,6 +12,10 @@ use exface\Core\Interfaces\Communication\CommunicationMessageInterface;
 use exface\Core\Interfaces\Communication\CommunicationReceiptInterface;
 use exface\Core\Interfaces\Communication\CommunicationConnectionInterface;
 use exface\Core\CommonLogic\Communication\CommunicationReceipt;
+use axenox\Notifier\Interfaces\SymfonyMessageInterface;
+use axenox\Notifier\Communication\Messages\SymfonyChatMessage;
+use exface\Core\Exceptions\Communication\CommunicationNotSentError;
+use axenox\Notifier\Communication\Recipients\SymfonyDsnRecipient;
 
 class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactions implements CommunicationConnectionInterface
 {
@@ -53,22 +57,20 @@ class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactio
         return;
     }
     
-    protected function getDsnString() : string
+    /**
+     * 
+     * @return string
+     */
+    protected function getDsnString() : ?string
     {
         return $this->dsn;
     }
     
-    protected function getDsn() : Dsn
-    {
-        return new Dsn($this->getDsnString());
-    }
-    
     /**
-     * The DSN for the transport to be used
+     * The DSN for the transport to be used. If not set, each message will need to have its own address/DSN
      * 
-     * @uxon-property transport_dsn
+     * @uxon-property dsn
      * @uxon-type string
-     * @uxon-required true
      * 
      * @param string $value
      * @return SymfonyNotifierDsnConnector
@@ -120,15 +122,42 @@ class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactio
      * 
      * @return TransportInterface
      */
-    protected function getTransport() : TransportInterface
+    protected function getTransport(Dsn $dsn) : TransportInterface
     {
-        return $this->getTransportFactory()->create($this->getDsn());
+        return $this->getTransportFactory()->create($dsn);
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\Communication\CommunicationConnectionInterface::communicate()
+     */
     public function communicate(CommunicationMessageInterface $message) : CommunicationReceiptInterface
     {
-        $transport = $this->getTransport();
-        $transport->send($message->getSymfonyMessage());
+        if (! ($message instanceof SymfonyMessageInterface)) {
+            throw new CommunicationNotSentError($message, 'Invalid message class "' . get_class($message) . '" - expecting SymfonyMessageInterface', null, null, $this);
+        }
+        
+        $dsns = [];
+        if ($this->getDsnString() !== null) {
+            $dsns[] = (new SymfonyDsnRecipient($this->getDsnString()))->getDsn();
+        } else {
+            foreach ($message->getRecipients() as $recipient) {
+                if ($recipient instanceof DsnRecipientInterface) {
+                    $dsns[] = $recipient->getDsn();
+                }
+            }
+        }
+        
+        if (empty($dsns)) {
+            throw new CommunicationNotSentError($message, 'Cannot determine DSN for communication connection ' . $this->getAliasWithNamespace() . ': either the connection or the message must have a DSN!', null, null, $this);
+        }
+        
+        foreach ($dsns as $dsn) {
+            $transport = $this->getTransport($dsn);
+            $transport->send($message->getSymfonyMessage());
+        }
+        
         return new CommunicationReceipt($message, $this);
     }
 }

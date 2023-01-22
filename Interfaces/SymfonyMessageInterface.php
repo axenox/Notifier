@@ -6,5 +6,9 @@ use Symfony\Component\Notifier\Message\MessageInterface;
 
 interface SymfonyMessageInterface extends CommunicationMessageInterface
 {
+    /**
+     * 
+     * @return MessageInterface
+     */
     public function getSymfonyMessage() : MessageInterface;
 }

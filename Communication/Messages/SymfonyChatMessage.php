@@ -8,10 +8,28 @@ use Symfony\Component\Notifier\Message\MessageInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 use exface\Core\CommonLogic\UxonObject;
 
+/**
+ * Generic message type usable for all Symfony notifier chat transports
+ * 
+ * Use a communication connection with `SymfonyChatterConnector` prototype and make sure
+ * the configuration of the connection includes a valid `message_options_class`.
+ * 
+ * Now set the `message_options` of each message sent through this connections according
+ * to the documentation of the Symfony notifier transport used. See the Symfony docs
+ * for details: https://symfony.com/doc/current/notifier/chatters.html. * 
+ * 
+ * @author Andrej Kabachnik
+ *
+ */
 class SymfonyChatMessage extends TextMessage implements SymfonyMessageInterface
 {
     private $messageOptions = null;
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \axenox\Notifier\Interfaces\SymfonyMessageInterface::getSymfonyMessage()
+     */
     public function getSymfonyMessage(string $optionsClass = null) : MessageInterface
     {
         $chatMsg = new ChatMessage($this->getSubject() ?? $this->getText(), $this->getSymfonyMessageOptions($optionsClass));

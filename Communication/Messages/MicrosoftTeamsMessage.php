@@ -10,6 +10,8 @@ use Symfony\Component\Notifier\Message\MessageInterface;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Interfaces\Communication\CommunicationMessageInterface;
 use exface\Core\DataTypes\StringDataType;
+use axenox\Notifier\Communication\Recipients\SymfonyDsnRecipient;
+use exface\Core\Interfaces\Communication\RecipientInterface;
 
 /**
  * Special message type for Microsoft message cards
@@ -19,6 +21,29 @@ use exface\Core\DataTypes\StringDataType;
  * https://messagecardplayground.azurewebsites.net/. Use placeholders available
  * at the point where the notification is to be created (e.g. the `NotifyingBehavior`).
  * Once you are done, copy-paste the entire JSON to `card`.
+ * 
+ * Example based on the core object `exface.Core.MONITOR_ERROR`:
+ * 
+ * ```
+ * {
+ *   "channel_webhook_url": "http://...",
+ *   "card": {
+ *     "@type": "MessageCard",
+ *     "@context": "https://schema.org/extensions",
+ *     "summary": "[#~data:MESSAGE#]",
+ *     "title": "[#~data:ERROR_LEVEL#] error for user [#~data:USER__USERNAME#]",
+ *     "sections": [{
+ *         "text": "[#~data:MESSAGE#]",
+ *         "facts": [
+ *           {"name": "Log-ID:", "value": "[#~data:LOG_ID#]"},
+ *           {"name": "User:", "value": "[#~data:USER__USERNAME#]"}
+ *         ]
+ *       }
+ *     ]
+ *   }
+ * }
+ * 
+ * ```
  * 
  * @author andrej.kabachnik
  *
@@ -46,6 +71,10 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
         return new MicrosoftTeamsOptions($this->getCard()->toArray());
     }
     
+    /**
+     * 
+     * @return bool
+     */
     protected function hasCard() : bool
     {
         return $this->card !== null;
@@ -107,6 +136,21 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
     }
     
     /**
+     * Custom channel URL for communication connections, that do not have a fixed DSN
+     * 
+     * @uxon-property teams_webhook_url
+     * @uxon-type string
+     * 
+     * @param string $value
+     * @return MicrosoftTeamsMessage
+     */
+    protected function setTeamsWebhookUrl(string $value) : MicrosoftTeamsMessage
+    {
+        $this->addRecipient($this->parseRcipientAddress($value));
+        return $this;
+    }
+    
+    /**
      * 
      * {@inheritDoc}
      * @see \exface\Core\Interfaces\iCanBeConvertedToUxon::exportUxonObject()
@@ -118,5 +162,25 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
             $uxon->setProperty('card', $this->dard);
         }
         return $uxon;
+    }
+    
+    /**
+     * 
+     * {@inheritdoc}
+     * @see AbstractMessage::parseRcipientAddress()
+     */
+    protected function parseRcipientAddress(string $address) : ?RecipientInterface
+    {
+        if (StringDataType::startsWith($address, 'https://', false)) {
+            return 'microsoftteams://' . StringDataType::substringAfter($address, 'https://', $address);
+        }
+        if (null === $recipient = parent::parseRcipientAddress($address)) {
+            try {
+                $recipient = new SymfonyDsnRecipient($address);
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $recipient;
     }
 }
