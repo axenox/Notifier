@@ -26,6 +26,10 @@
             "attribute_alias": "APP"
         },
         {
+            "name": "TIME_ZONE",
+            "attribute_alias": "TIME_ZONE"
+        },
+        {
             "name": "LABEL",
             "attribute_alias": "LABEL"
         },
@@ -44,10 +48,6 @@
         {
             "name": "ALIAS",
             "attribute_alias": "ALIAS"
-        },
-        {
-            "name": "FILTER_CONTEXT",
-            "attribute_alias": "FILTER_CONTEXT"
         }
     ],
     "rows": [
@@ -58,12 +58,12 @@
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11ed985174c936b29851747827435ce5",
             "APP": "0x11ec8b3a97dedf288b3a00059a3c7a00",
+            "TIME_ZONE": null,
             "LABEL": "Microsoft Teams generic connection",
             "CONNECTOR": "axenox\/notifier\/DataConnectors\/SymfonyChatterConnector.php",
-            "CONFIG": "$$~~fvsWNnzobsl9gDPRiF1FwuSkMI++6ALrWuIb6QHrzlFbY903BBS\/dN0Q2kImEM1YzUjXwb515JzqvYA+SFxr1d42ddEHkJi1M7dd9Twq6KpqSzAKofdYUgJQkf5hjbRtIG49jW+nzoeWtcLCEVx9s1wPoROBXTnbdi\/S7YWMLbwyJ67hgb7Ob1HrpHq\/kNV5anA3EndmF9KOIrjR",
+            "CONFIG": "$$~~3QHHZnegyaJr\/dXxDMIVbl2Gub1FVkXy+Bpqx8gDDU43FhyaNOF\/LJxDlutDEeJYYRlGuoe1VQQsFOGQ5s+R+\/DuGbbH5vouSpqaD8nnLPr9tp7QVpP3feJBtKg+ggRC42LDVHjDuFWume06JSqogMgzAXMCyOTzevflyKI+LedmyKazTntsINeSKml\/Pgu8PkeekbDYyshOq85v",
             "READONLY": 0,
-            "ALIAS": "microsoft_teams_generic_connection",
-            "FILTER_CONTEXT": null
+            "ALIAS": "microsoft_teams_generic_connection"
         }
     ],
     "totals_rows": [],
