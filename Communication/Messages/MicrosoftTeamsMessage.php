@@ -18,9 +18,12 @@ use exface\Core\Interfaces\Communication\RecipientInterface;
  * 
  * You can control the message appearance using the `card` property of
  * the message. Design your messages using the official interactive playground here:
- * https://messagecardplayground.azurewebsites.net/. Use placeholders available
- * at the point where the notification is to be created (e.g. the `NotifyingBehavior`).
- * Once you are done, copy-paste the entire JSON to `card`.
+ * 
+ * https://messagecardplayground.azurewebsites.net/
+ * 
+ * Use placeholders available at the point where the notification is to be created 
+ * (e.g. the `NotifyingBehavior`). Once you are done, copy-paste the entire JSON to 
+ * `card`.
  * 
  * Example based on the core object `exface.Core.MONITOR_ERROR`:
  * 
@@ -90,7 +93,11 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
     }
     
     /**
-     * Definition of a Microsoft message card 
+     * Definition of a Microsoft message card.
+     * 
+     * Use the official playground to edit the card visually:
+     * 
+     * https://messagecardplayground.azurewebsites.net/
      * 
      * @uxon-property card
      * @uxon-type object

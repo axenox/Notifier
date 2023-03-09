@@ -57,7 +57,7 @@
     "rows": [
         {
             "CREATED_ON": "2022-10-06 17:32:59",
-            "MODIFIED_ON": "2022-10-06 17:33:20",
+            "MODIFIED_ON": "2023-03-09 15:54:05",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11eda83b2943bff4a83b025041000001",
@@ -67,11 +67,58 @@
             "PROTOTYPE": "axenox\/notifier\/DataConnectors\/SymfonyChatterConnector.php",
             "UXON": {
                 "dsn": "microsoftteams:\/\/",
-                "transport_factory_class": "\\Symfony\\Component\\Notifier\\Bridge\\MicrosoftTeams\\MicrosoftTeamsTransportFactory",
-                "message_options_class": "\\Symfony\\Component\\Notifier\\Bridge\\MicrosoftTeams\\MicrosoftTeamsOptions"
+                "transport_factory_class": "\\Symfony\\Component\\Notifier\\Bridge\\MicrosoftTeams\\MicrosoftTeamsTransportFactory"
             },
             "WRAP_PATH": "",
             "UXON_SCHEMA": "connection",
+            "THUMBNAIL": ""
+        },
+        {
+            "CREATED_ON": "2023-01-22 20:27:12",
+            "MODIFIED_ON": "2023-01-24 17:23:34",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11edb226c59e443eb226025041000001",
+            "APP": "0x11ec8b3a97dedf288b3a00059a3c7a00",
+            "NAME": "MS Teams post to channel specified in connection",
+            "DESCRIPTION": "",
+            "PROTOTYPE": "axenox\/notifier\/Communication\/Messages\/MicrosoftTeamsMessage.php",
+            "UXON": {
+                "card": {
+                    "@type": "MessageCard",
+                    "@context": "https:\/\/schema.org\/extensions",
+                    "summary": "",
+                    "title": "",
+                    "sections": [
+                        {
+                            "facts": [
+                                {
+                                    "name": "",
+                                    "value": "[#~data:<REPLACE_WITH_ATTRIBUTE_ALIAS>#]"
+                                },
+                                {
+                                    "name": "",
+                                    "value": "[#~data:<REPLACE_WITH_ATTRIBUTE_ALIAS>#]"
+                                }
+                            ]
+                        }
+                    ],
+                    "potentialAction": [
+                        {
+                            "@type": "OpenUri",
+                            "name": "",
+                            "targets": [
+                                {
+                                    "os": "default",
+                                    "uri": "[#~data:<REPLACE_WITH_URL_ATTRIBUTE_ALIAS>#]"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "WRAP_PATH": "",
+            "UXON_SCHEMA": "\\exface\\Core\\Uxon\\CommunicationMessageSchema",
             "THUMBNAIL": ""
         }
     ],
