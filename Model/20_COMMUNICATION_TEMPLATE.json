@@ -49,7 +49,7 @@
     "rows": [
         {
             "CREATED_ON": "2022-10-10 12:23:02",
-            "MODIFIED_ON": "2022-10-11 12:17:34",
+            "MODIFIED_ON": "2023-03-09 16:09:26",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11edaee5857dae82aee5025041000001",
@@ -67,12 +67,24 @@
                             "text": "[#~data:MESSAGE#]",
                             "facts": [
                                 {
-                                    "name": "Log-ID:",
-                                    "value": "[#~data:LOG_ID#]"
+                                    "name": "Occurred:",
+                                    "value": "[#~data:CREATED_ON#]"
                                 },
                                 {
                                     "name": "User:",
                                     "value": "[#~data:USER__USERNAME#]"
+                                }
+                            ]
+                        }
+                    ],
+                    "potentialAction": [
+                        {
+                            "@type": "OpenUri",
+                            "name": "Monitor",
+                            "targets": [
+                                {
+                                    "os": "default",
+                                    "uri": "[#=PageURL('exface.core.monitor')#]"
                                 }
                             ]
                         }
