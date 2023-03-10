@@ -99,6 +99,29 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
      * 
      * https://messagecardplayground.azurewebsites.net/
      * 
+     * ## Example
+     * 
+     * ```
+     * {
+     *   "channel_webhook_url": "http://...",
+     *   "card": {
+     *     "@type": "MessageCard",
+     *     "@context": "https://schema.org/extensions",
+     *     "summary": "[#~data:MESSAGE#]",
+     *     "title": "[#~data:ERROR_LEVEL#] error for user [#~data:USER__USERNAME#]",
+     *     "sections": [{
+     *         "text": "[#~data:MESSAGE#]",
+     *         "facts": [
+     *           {"name": "Log-ID:", "value": "[#~data:LOG_ID#]"},
+     *           {"name": "User:", "value": "[#~data:USER__USERNAME#]"}
+     *         ]
+     *       }
+     *     ]
+     *   }
+     * }
+     * 
+     * ```
+     * 
      * @uxon-property card
      * @uxon-type object
      * @uxon-template {"@type": "MessageCard", "@context": "https://schema.org/extensions", "summary": "", "title": ""}
