@@ -3,6 +3,7 @@ namespace axenox\Notifier\Communication\Recipients;
 
 use axenox\Notifier\Interfaces\DsnRecipientInterface;
 use Symfony\Component\Notifier\Transport\Dsn;
+use exface\Core\Interfaces\Communication\RecipientInterface;
 
 class SymfonyDsnRecipient implements DsnRecipientInterface
 {
@@ -35,5 +36,15 @@ class SymfonyDsnRecipient implements DsnRecipientInterface
     public function __toString(): string
     {
         return $this->dsnString;
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\Communication\RecipientInterface::is()
+     */
+    public function is(RecipientInterface $otherRecipient): bool
+    {
+        return strcasecmp($this->__toString(), $otherRecipient->__toString()) === 0;
     }
 }
