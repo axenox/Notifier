@@ -202,7 +202,7 @@ class MicrosoftTeamsMessage extends AbstractMessage implements SymfonyMessageInt
     protected function parseRcipientAddress(string $address) : ?RecipientInterface
     {
         if (StringDataType::startsWith($address, 'https://', false)) {
-            return 'microsoftteams://' . StringDataType::substringAfter($address, 'https://', $address);
+            return new SymfonyDsnRecipient('microsoftteams://' . StringDataType::substringAfter($address, 'https://', $address));
         }
         if (null === $recipient = parent::parseRcipientAddress($address)) {
             try {
