@@ -1,7 +1,8 @@
 <?php
 namespace axenox\Notifier\DataConnectors;
 
-use exface\Core\CommonLogic\AbstractDataConnectorWithoutTransactions;
+use exface\Core\CommonLogic\AbstractDataConnector;
+use exface\Core\DataConnectors\Traits\IDoNotSupportTransactionsTrait;
 use exface\Core\Interfaces\DataSources\DataQueryInterface;
 use Symfony\Component\Notifier\Transport\Dsn;
 use Symfony\Component\Notifier\Transport\TransportInterface;
@@ -13,12 +14,13 @@ use exface\Core\Interfaces\Communication\CommunicationReceiptInterface;
 use exface\Core\Interfaces\Communication\CommunicationConnectionInterface;
 use exface\Core\CommonLogic\Communication\CommunicationReceipt;
 use axenox\Notifier\Interfaces\SymfonyMessageInterface;
-use axenox\Notifier\Communication\Messages\SymfonyChatMessage;
 use exface\Core\Exceptions\Communication\CommunicationNotSentError;
 use axenox\Notifier\Communication\Recipients\SymfonyDsnRecipient;
 
-class SymfonyNotifierDsnConnector extends AbstractDataConnectorWithoutTransactions implements CommunicationConnectionInterface
+class SymfonyNotifierDsnConnector extends AbstractDataConnector implements CommunicationConnectionInterface
 {
+    use IDoNotSupportTransactionsTrait;
+
     private $dsn = null;
     
     private $transportFactoryClass = null;
